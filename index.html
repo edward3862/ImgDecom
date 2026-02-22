@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Cycle-Consistent Tuning for Layered Image Decomposition">
+  <meta name="keywords" content="Cycle-Consistent Tuning, Layered Image Decomposition, Diffusion Models">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cycle-Consistent Tuning for Layered Image Decomposition</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/icon.jpg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">
+            Cycle-Consistent Tuning for Layered Image Decomposition
+          </h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://edward3862.github.io/">Zheng Gu</a><sup>1</sup>,
+            </span>&nbsp;
+            <span class="author-block">
+              <a href="https://deardeer.github.io/">Min Lu</a><sup>1</sup>,
+            </span>&nbsp;
+            <span class="author-block">
+              <a href="https://zhdsun.github.io/">Zhida Sun</a><sup>1</sup>,
+            </span>&nbsp;
+            <span class="author-block">
+              <a href="https://www.cs.huji.ac.il/~danix/">Dani Lischinski</a><sup>2</sup>,
+            </span>&nbsp;
+            <span class="author-block">
+              <a href="https://danielcohenor.com/">Daniel Cohen-Or</a><sup>3</sup>,
+            </span>&nbsp;
+            <span class="author-block">
+              <a href="https://cs.nju.edu.cn/gaoyang/index.htm">Hui Huang</a><sup>1</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>CSSE, Shenzhen University</span>&emsp;
+            <span class="author-block"><sup>2</sup>Hebrew University of Jerusalem</span>&emsp;
+            <span class="author-block"><sup>3</sup>Tel-Aviv University</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link.-->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>&emsp;
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>&emsp;
+              <!-- <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                </a>
+              </span>&emsp; -->
+              <!-- <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-clone"></i>
+                  </span>
+                  <span>Model</span>
+                </a>
+              </span> -->
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <div>
+        <img src="./static/images/teaser.jpg"/>
+      </div>
+    </div>
+  </div>
+  <div class="container is-max-desktop">
+    <div width="100%" style="font-size: 20px; text-align: center;">
+      <b>TL;DR</b>: We separate images into layers with cycle-consistent LoRA tuning and In-Context Learning (ICL). Our method can clearly disentangle nonlinear logos from objects and recomposes them back.
+    </div>
+  </div>
+</section>
+
+<br><br>
+
+
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Disentangling visual layers in real-world images is a persistent challenge in vision and graphics, as such layers often involve non-linear and globally coupled interactions, including shading, reflection, and perspective distortion. In this work, we present an in-context image decomposition framework that leverages large diffusion foundation models for layered separation.
+          </p>  
+          <p>
+            We focus on the challenging case of logo-object decomposition, where the goal is to disentangle a logo from the surface on which it appears while faithfully preserving both layers. Our method fine-tunes a pretrained diffusion model via lightweight LoRA adaptation and introduces a cycle-consistent tuning strategy that jointly trains decomposition and composition models, enforcing reconstruction consistency between decomposed and recomposed images. This bidirectional supervision substantially enhances robustness in cases where the layers exhibit complex interactions.
+          </p>
+          <p>
+            Furthermore, we introduce a progressive self-improving process, which iteratively augments the training set with high-quality model-generated examples to refine performance. Extensive experiments demonstrate that our approach achieves accurate and coherent decompositions and also generalizes effectively across other decomposition types, suggesting its potential as a unified framework for layered image decomposition.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+  </div>
+</section>
+
+<!-- <section class="section">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">How does it work?</h2>
+          <img src="./static/images/decompose_process.jpg"/>
+          <div class="content has-text-justified">
+            <p>
+              Given a composite image, the model receives a masked input, a binary mask indicating the logo region, and a noise latent, and predicts both the isolated logo and the clean object. The process is implemented by <b><u>tuning a LoRA on top of Flux-Fill</u></b>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+<!-- <section class="section">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3 has-text-centered">Cycle-consistent Tuning</h2>
+          <div class="columns is-variable is-6">
+            <div class="column has-text-centered">
+              <figure class="image">
+                <img class="illustration" src="./static/images/cycle_consistency.jpg" alt="Cycle-consistent training pipeline illustration"/>
+              </figure>
+              <p class="content has-text-justified">
+                We jointly optimize a decomposition branch and a composition branch so that every decomposed logo/object pair must re-render back to the original composite, while a re-composed image is forced to re-split into the same pair. This cycle training loop stabilizes supervision under severe appearance coupling, keeps both branches synchronized, and encourages faithful layer separation even when lighting, shading, or distortions introduce complex nonlinear interactions.
+              </p>
+            </div>
+            <div class="column has-text-centered">
+              <figure class="image">
+                <img class="illustration" src="./static/images/data_collection.jpg" alt="Data collection pipeline"/>
+              </figure>
+              <p class="content has-text-centered">
+                Data: each training pair is curated with human-in-the-loop annotations and cleaned composites so the model learns from reliable layered supervision.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+<section class="section section-tight">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <!-- Method. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">How does it work?</h2>
+          <img src="./static/images/decompose_process.jpg"/>
+          <div class="content has-text-justified">
+            <p>
+              Given a composite image, the model receives a masked input, a binary mask indicating the logo region, and a noise latent, and predicts both the isolated logo and the clean object. The process leverages the <b><u>in-context learning</u></b> capabilities of the model.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Cycle-consistent Tuning</h2>
+      <div class="columns is-vcentered">
+        <div class="column is-half has-text-centered">
+          <img class="illustration" src="./static/images/cycle_consistency.jpg" alt="Cycle-consistent training pipeline illustration"/>
+        </div>
+        <div class="column">
+          <p class="content has-text-justified">
+            <b>Image decomposition is inherently ill-posed.</b><br> We aim to split one image into multiple layers, but the layers are not uniquely determined, especially when the image is coupled with lighting or perspective distortions.
+          </p>
+          <p class="content has-text-justified">
+            <b>However, composition is deterministic.</b><br> The key insight is that composition is deterministic. Once layers are known, putting them back together should always give the original image.
+          </p>
+          <p class="content has-text-justified">
+            <b>Therefore, we introduce cycle consistency.</b><br> We train the network to decompose an image, recombine the predicted layers, and recover the input. If the reconstruction fails, the decomposition must be wrong.
+          </p>
+          <p class="content has-text-justified">
+            <b>This cyclic loop provides reliable supervision.</b><br> The model jointly learns decomposition and composition, stabilizes training under severe appearance coupling, and greatly reduces ambiguity.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <!-- Results. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">Results</h2>
+        </div>
+      </div>
+      <div class="column is-full-width">
+        <div class="container is-max-desktop">
+          <h3 class="title is-4">Lighting Variations</h3>
+          <div id="sync-lighting-carousel" class="carousel results-carousel">
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/lighting/001.jpg" alt="Lighting variation decomposition example 1"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/lighting/002.jpg" alt="Lighting variation decomposition example 2"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/lighting/003.jpg" alt="Lighting variation decomposition example 3"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/lighting/004.jpg" alt="Lighting variation decomposition example 4"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/lighting/005.jpg" alt="Lighting variation decomposition example 5"/>
+            </div>
+          </div>
+        </div>
+        <div class="container is-max-desktop" style="margin-top: 2rem;">
+          <h3 class="title is-4">Perspective Distortion</h3>
+          <div id="sync-perspective-carousel" class="carousel results-carousel">
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/perspective/001.jpg" alt="Perspective decomposition example 1"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/perspective/002.jpg" alt="Perspective decomposition example 2"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/perspective/003.jpg" alt="Perspective decomposition example 3"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/perspective/004.jpg" alt="Perspective decomposition example 4"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/perspective/005.jpg" alt="Perspective decomposition example 5"/>
+            </div>
+          </div>
+        </div>
+        <div class="container is-max-desktop" style="margin-top: 2rem;">
+          <h3 class="title is-4">Text Patterns</h3>
+          <div id="sync-text-carousel" class="carousel results-carousel">
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/text/001.jpg" alt="Text pattern decomposition example 1"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/text/002.jpg" alt="Text pattern decomposition example 2"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/text/003.jpg" alt="Text pattern decomposition example 3"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/text/004.jpg" alt="Text pattern decomposition example 4"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/text/005.jpg" alt="Text pattern decomposition example 5"/>
+            </div>
+          </div>
+        </div>
+        <div class="container is-max-desktop" style="margin-top: 2rem;">
+          <h3 class="title is-4">3D Logos</h3>
+          <div id="sync-3d-carousel" class="carousel results-carousel">
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/3D/001.jpg" alt="3D logo decomposition example 1"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/3D/002.jpg" alt="3D logo decomposition example 2"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/3D/003.jpg" alt="3D logo decomposition example 3"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/3D/004.jpg" alt="3D logo decomposition example 4"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/3D/005.jpg" alt="3D logo decomposition example 5"/>
+            </div>
+          </div>
+        </div>
+        <div class="container is-max-desktop" style="margin-top: 2rem;">
+          <h3 class="title is-4">Transparency Effects</h3>
+          <div id="sync-transparency-carousel" class="carousel results-carousel">
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/transparency/001.jpg" alt="Transparency decomposition example 1"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/transparency/002.jpg" alt="Transparency decomposition example 2"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/transparency/003.jpg" alt="Transparency decomposition example 3"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/transparency/004.jpg" alt="Transparency decomposition example 4"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/sync_images/transparency/005.jpg" alt="Transparency decomposition example 5"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column is-full-width">
+        <h3 class="title is-4">Results on Real Photographs</h3>
+        <div class="container is-max-desktop">
+          <div id="results-carousel" class="carousel results-carousel">
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/real_images/001.jpg" alt="Real image decomposition result 1"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/real_images/002.jpg" alt="Real image decomposition result 2"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/real_images/003.jpg" alt="Real image decomposition result 3"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/real_images/004.jpg" alt="Real image decomposition result 4"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/real_images/005.jpg" alt="Real image decomposition result 5"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/real_images/006.jpg" alt="Real image decomposition result 6"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/real_images/007.jpg" alt="Real image decomposition result 7"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/real_images/008.jpg" alt="Real image decomposition result 8"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/real_images/009.jpg" alt="Real image decomposition result 9"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/real_images/010.jpg" alt="Real image decomposition result 10"/>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+      <h2 class="title is-3">Comparison with SOTA</h2>
+      <figure class="image">
+        <img src="./static/images/comparison.jpg" alt="Comparison with state-of-the-art methods"/>
+      </figure>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <!-- Results. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">Results on other decomposition tasks</h2>
+        </div>
+      </div>
+      <div class="column is-full-width">
+        <h3 class="title is-4">Intrinsic Decomposition</h3>
+        <div class="container is-max-desktop">
+          <div id="intrinsic-carousel" class="carousel results-carousel">
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/intrinsic/001.jpg" alt="Intrinsic decomposition result 1"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/intrinsic/002.jpg" alt="Intrinsic decomposition result 2"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/intrinsic/003.jpg" alt="Intrinsic decomposition result 3"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/intrinsic/004.jpg" alt="Intrinsic decomposition result 4"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/intrinsic/005.jpg" alt="Intrinsic decomposition result 5"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/intrinsic/006.jpg" alt="Intrinsic decomposition result 6"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/intrinsic/007.jpg" alt="Intrinsic decomposition result 7"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/intrinsic/008.jpg" alt="Intrinsic decomposition result 8"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/intrinsic/009.jpg" alt="Intrinsic decomposition result 9"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/intrinsic/010.jpg" alt="Intrinsic decomposition result 10"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column is-full-width">
+        <h3 class="title is-4">Foreground-Background Decomposition</h3>
+        <div class="container is-max-desktop">
+          <div id="fg-bg-carousel" class="carousel results-carousel">
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/fg_bg/001.jpg" alt="Foreground-background decomposition result 1"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/fg_bg/002.jpg" alt="Foreground-background decomposition result 2"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/fg_bg/003.jpg" alt="Foreground-background decomposition result 3"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/fg_bg/004.jpg" alt="Foreground-background decomposition result 4"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/fg_bg/005.jpg" alt="Foreground-background decomposition result 5"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/fg_bg/006.jpg" alt="Foreground-background decomposition result 6"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/fg_bg/007.jpg" alt="Foreground-background decomposition result 7"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/fg_bg/008.jpg" alt="Foreground-background decomposition result 8"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/fg_bg/009.jpg" alt="Foreground-background decomposition result 9"/>
+            </div>
+            <div class="item" style="margin: 0px; overflow: auto; border:0px; text-align: center;">
+              <img src="./static/images/results/fg_bg/010.jpg" alt="Foreground-background decomposition result 10"/>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{gu2026cycle,
+  title  = {Cycle-Consistent Tuning for Layered Image Decomposition},
+  author = {GU, Zheng and Lu, Min and Sun, Zhida and Lischinski, Dani and Cohen-Or, Daniel and Huang, Hui},
+  year   = {2026},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This means you are free to borrow the <a
+              href="https://github.com/analogist2d/analogist2d.github.io">source code</a> of this website,
+            we just ask that you link back to this page in the footer.
+            Please remember to remove the analytics code included in the header of the website which
+            you do not want on your website.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
