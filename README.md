@@ -1,4 +1,4 @@
-# Cycle-Consistent Tuning for Layered Image Decomposition (CVPR26)
+# Cycle-Consistent Tuning for Layered Image Decomposition (CVPR 2026)
 
 <div align="center">
 
