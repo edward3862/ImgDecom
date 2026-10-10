@@ -1,0 +1,42 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+
+# Env
+.env
+.env.local
+
+__pycache__/
+*.py[cod]
+
+data/*
+!data/mask_1x3_011.png
+!data/mask_1x3_100.png
+ai-toolkit/
+checkpoints/
+misc/
+models/
+runs/
+scripts/
+tests/
+output/
+paper/

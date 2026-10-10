@@ -32,9 +32,66 @@ The method achieves accurate and coherent decompositions and generalizes effecti
 
 ---
 
-## 🚀 Code & Models
+## Setup
 
-**Code and pretrained models will be released soon.**
+```bash
+git clone https://github.com/edward3862/ImgDecom.git
+cd ImgDecom
+uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python -r requirements.txt
+source .venv/bin/activate
+```
+
+---
+
+## 🚀 Model & Code
+
+The inference uses `black-forest-labs/FLUX.1-Fill-dev` with our [LoRA weights](https://huggingface.co/picana/ImgDecom).
+
+Download the weights to the path expected by the inference scripts:
+
+```bash
+hf download picana/ImgDecom pytorch_lora_weights.safetensors --local-dir checkpoints
+```
+
+For the provided examples and test-set inference, download the [logo-product test dataset](https://huggingface.co/datasets/picana/ImgDecom):
+
+```bash
+hf download picana/ImgDecom --repo-type dataset --local-dir data/logo_product_test
+```
+
+### Decompose one image
+
+For the example three-panel input, run:
+
+```bash
+bash scripts/inference_single_image.sh
+```
+
+You can also provide an image and decomposition prompt directly:
+
+```bash
+python inference_single_image.py \
+  --input-image path/to/image.png \
+  --input-format image \
+  --decomp-prompt "A stepwise decomposition of branding elements. [LEFT]: {an object with a logo.} [MIDDLE]: {the isolated logo.} [RIGHT]: {the object without the logo.}"
+```
+
+Set `--input-format grid` for an existing 1536 × 512 three-panel image. With `--input-format image`, the script scales the image to fit a 512 × 512 panel, pads it if needed, and places it on the left of a three-panel grid.
+
+### Run the test set
+
+```bash
+bash scripts/inference.sh
+```
+
+The script processes the PNG inputs in `data/logo_product_test/grid/`. Each `image_XXXXX.png` needs matching `image_XXXXX_decomp.txt` and `image_XXXXX_comp.txt` files in the same directory. For each input, it saves a decomposition image (`_decomp.png`) and a recomposed image (`_recomp.png`). To set the input or output directory explicitly, run:
+
+```bash
+python inference.py \
+  --folder data/logo_product_test/grid \
+  --output-dir output/test_set
+```
 
 ---
 
